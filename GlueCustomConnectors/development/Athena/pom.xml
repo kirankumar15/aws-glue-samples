@@ -18,8 +18,8 @@
     </licenses>
 
     <properties>
-        <slf4jVersion>1.7.30</slf4jVersion>
-        <log4j2Version>2.13.3</log4j2Version>
+        <slf4jVersion>2.0.17</slf4jVersion>
+        <logbackVersion>1.3.16</logbackVersion>
     </properties>
 
     <dependencies>
@@ -46,27 +46,9 @@
             <version>${slf4jVersion}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j2Version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-log4j2</artifactId>
-            <version>1.1.0</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j2Version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j2Version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logbackVersion}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -98,20 +80,7 @@
                             </excludes>
                         </filter>
                     </filters>
-                    <transformers>
-                        <!-- This transformer is here to concatenate log4j2 cache during shading -->
-                        <transformer
-                                implementation="com.github.edwgiz.mavenShadePlugin.log4j2CacheTransformer.PluginsCacheFileTransformer">
-                        </transformer>
-                    </transformers>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.github.edwgiz</groupId>
-                        <artifactId>maven-shade-plugin.log4j2-cachefile-transformer</artifactId>
-                        <version>2.8.1</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>with-arrow</id>
