@@ -19,17 +19,14 @@
   #L%
   -->
 
-<Configuration packages="com.amazonaws.services.lambda.runtime.log4j2">
-    <Appenders>
-        <Lambda name="Lambda">
-            <PatternLayout>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss} %X{AWSRequestId} %-5p %c{1}:%L - %m%n</pattern>
-            </PatternLayout>
-        </Lambda>
-    </Appenders>
-    <Loggers>
-        <Root level="info">
-            <AppenderRef ref="Lambda" />
-        </Root>
-    </Loggers>
-</Configuration>
+<configuration>
+    <!-- AWS Lambda forwards stdout to CloudWatch Logs, replacing the log4j2 Lambda appender -->
+    <appender name="Lambda" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %X{AWSRequestId} %-5level %logger{36}:%L - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="Lambda"/>
+    </root>
+</configuration>
