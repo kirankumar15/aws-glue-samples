@@ -162,6 +162,8 @@ You can use any IDE or even just a command line editor to write your connector. 
 
 As of 12/21/2020, Glue supports Athena connectors built with `athena-federation-sdk` version 2020.5.1. So you need to run `git reset --hard 112500b499be9326a8da51f5cf402c4ddc14b5de` to travel back to that version of SDK. Now run `mvn clean install -DskipTests=true > /tmp/log` from the athena-federation-sdk directory within the Github project you checked out earlier. We are skipping tests with the `-DskipTests=true` option to make the build faster. As a best practice, you should let the tests run. 
 
+Note: the example connector in this directory has been migrated to AWS SDK for Java 2.x and now depends on `aws-athena-federation-sdk` version 2025.5.1 (the latest Java 8 compatible release built on AWS SDK for Java 2.x), which is resolved from Maven Central. Verify that your target Glue version supports connectors built with this SDK version before deploying.
+
 ### Step 4: Write The Code
 
 1. Create an s3 bucket (in the same region you will be deploying the connector), that we can upload some sample data using the following command `aws s3 mb s3://BUCKET_NAME` but be sure to put your actual bucket name in the command and that you pick something that is unlikely to already exist.
