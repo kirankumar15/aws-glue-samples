@@ -2,12 +2,12 @@
  * Copyright 2016-2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT-0
  */
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.regions.DefaultAwsRegionProviderChain;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
 import org.apache.spark.sql.sources.v2.DataSourceV2;
@@ -85,14 +85,17 @@ class JavaSimpleInputPartitionReader implements InputPartitionReader<InternalRow
     String line = null;
 
     JavaSimpleInputPartitionReader(int filedId, String bucket, String path) {
-        AmazonS3 s3Client = AmazonS3Client.builder()
-                .withCredentials(new DefaultAWSCredentialsProviderChain())
-                .withRegion(new DefaultAwsRegionProviderChain().getRegion())
-                .withForceGlobalBucketAccessEnabled(true)
+        S3Client s3Client = S3Client.builder()
+                .credentialsProvider(DefaultCredentialsProvider.create())
+                .region(new DefaultAwsRegionProviderChain().getRegion())
+                .crossRegionAccessEnabled(true)
                 .build();
-        S3Object s3Object = s3Client
-                .getObject(new GetObjectRequest(bucket, String.format("%s%s.csv", path, filedId)));
-        reader  = new BufferedReader(new InputStreamReader(s3Object.getObjectContent()));
+        ResponseInputStream<GetObjectResponse> s3Object = s3Client
+                .getObject(GetObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(String.format("%s%s.csv", path, filedId))
+                        .build());
+        reader  = new BufferedReader(new InputStreamReader(s3Object));
     }
 
     @Override

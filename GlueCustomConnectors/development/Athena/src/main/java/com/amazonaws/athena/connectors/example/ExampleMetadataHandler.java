@@ -22,8 +22,6 @@ import com.amazonaws.athena.connector.lambda.metadata.ListSchemasResponse;
 import com.amazonaws.athena.connector.lambda.metadata.ListTablesRequest;
 import com.amazonaws.athena.connector.lambda.metadata.ListTablesResponse;
 import com.amazonaws.athena.connector.lambda.security.EncryptionKeyFactory;
-import com.amazonaws.services.athena.AmazonAthena;
-import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import org.apache.arrow.util.VisibleForTesting;
 import org.apache.arrow.vector.complex.reader.FieldReader;
 //DO NOT REMOVE - this will not be _unused_ when customers go through the tutorial and uncomment
@@ -31,6 +29,8 @@ import org.apache.arrow.vector.complex.reader.FieldReader;
 import org.apache.arrow.vector.types.Types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.services.athena.AthenaClient;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,17 +62,17 @@ public class ExampleMetadataHandler
 
     public ExampleMetadataHandler()
     {
-        super(SOURCE_TYPE);
+        super(SOURCE_TYPE, System.getenv());
     }
 
     @VisibleForTesting
     protected ExampleMetadataHandler(EncryptionKeyFactory keyFactory,
-                                     AWSSecretsManager awsSecretsManager,
-                                     AmazonAthena athena,
+                                     SecretsManagerClient awsSecretsManager,
+                                     AthenaClient athena,
                                      String spillBucket,
                                      String spillPrefix)
     {
-        super(keyFactory, awsSecretsManager, athena, SOURCE_TYPE, spillBucket, spillPrefix);
+        super(keyFactory, awsSecretsManager, athena, SOURCE_TYPE, spillBucket, spillPrefix, System.getenv());
     }
 
     /**
@@ -122,7 +122,7 @@ public class ExampleMetadataHandler
          *
          */
 
-        return new ListTablesResponse(request.getCatalogName(), tables);
+        return new ListTablesResponse(request.getCatalogName(), tables, null);
     }
 
     /**
