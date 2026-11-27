@@ -12,16 +12,16 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
-		<hadoop.version>2.8.5</hadoop.version>
-		<awssdk.version>1.11.696</awssdk.version>
+		<hadoop.version>3.4.2</hadoop.version>
+		<awssdk.version>2.29.52</awssdk.version>
 		<httpclient.version>4.5.9</httpclient.version>
                 <jackson.version>2.10.3</jackson.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-bom</artifactId>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
 				<version>${awssdk.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -61,27 +61,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- S3A in hadoop-aws 3.4.x is built on AWS SDK for Java 2.x and requires the SDK v2 bundle artifact -->
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-annotations</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>bundle</artifactId>
+			<version>${awssdk.version}</version>
 		</dependency>
+		<!-- Previously provided transitively by Hadoop 2.x; still required by Spark 2.4 core -->
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
